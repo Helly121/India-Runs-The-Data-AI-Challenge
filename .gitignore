@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Datasets (large files)
+candidates.jsonl
+sample_candidates.json
+job_description.docx
+
+# Documentation requested to be ignored
+CHEAT_SHEET.md
+ranking_system_implementation_prompt.md
+README_START_HERE.md
+submission_structure_checklist.md
+technical_reference_guide.md

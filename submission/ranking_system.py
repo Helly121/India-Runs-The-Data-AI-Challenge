@@ -5,6 +5,10 @@ For India Runs Hackathon. Complete two-stage L1/L2 retrieval and scoring pipelin
 """
 
 import os
+# Force offline mode for Hugging Face Hub and Transformers
+os.environ["HF_HUB_OFFLINE"] = "1"
+os.environ["TRANSFORMERS_OFFLINE"] = "1"
+
 import sys
 import json
 import csv
@@ -530,7 +534,7 @@ class CandidateRankingEngine:
             from sentence_transformers import SentenceTransformer as ST
             SentenceTransformer = ST
             
-        model = SentenceTransformer(EMBEDDING_MODEL)
+        model = SentenceTransformer(EMBEDDING_MODEL, local_files_only=True)
         
         # Embed JD Requirements
         jd_skills_text = ", ".join([s[0] for s in self.jd_requirements["required_skills"]])

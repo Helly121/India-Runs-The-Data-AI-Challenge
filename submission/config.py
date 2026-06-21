@@ -23,38 +23,58 @@ BEHAVIORAL_WEIGHTS = {
     "market": 0.05
 }
 
-# Pre-parsed defaults for founding AI engineer job description
+# Master lists for dynamic JD parsing
+MASTER_SKILLS_LIST = [
+    # AI/ML
+    "Python", "Machine Learning", "Deep Learning", "Natural Language Processing", "NLP", 
+    "Computer Vision", "PyTorch", "TensorFlow", "Keras", "Scikit-Learn", "XGBoost", 
+    "Data Science", "Data Analysis", "Artificial Intelligence", "Generative AI", "LLM", 
+    "LangChain", "LlamaIndex", "embeddings", "vector databases", "Pinecone", "Qdrant", 
+    "Weaviate", "Milvus", "search infrastructure", "Information Retrieval", "Elasticsearch", 
+    "evaluation frameworks", "MLOps", "Model Deployment", "Neural Networks",
+    
+    # Backend/General
+    "Java", "C++", "Go", "Golang", "JavaScript", "TypeScript", "Node.js", "React", "Angular",
+    "SQL", "NoSQL", "PostgreSQL", "MySQL", "MongoDB", "Redis", "Kafka", "RabbitMQ",
+    "AWS", "GCP", "Azure", "Docker", "Kubernetes", "CI/CD", "Git", "Linux", "REST APIs",
+    "GraphQL", "Microservices", "System Design", "Cloud Computing", "Spring Boot"
+]
+
+MASTER_TITLES_LIST = [
+    "AI Engineer", "Machine Learning Engineer", "Data Scientist", "Software Engineer", 
+    "Data Engineer", "Backend Engineer", "Frontend Engineer", "Full Stack Engineer", 
+    "Product Manager", "DevOps Engineer", "Cloud Engineer", "Research Scientist",
+    "NLP Engineer", "Computer Vision Engineer", "Data Analyst", "Analytics Engineer",
+    "Founding AI Engineer"
+]
+
+MASTER_EDUCATION_LIST = [
+    "B.Tech", "B.E.", "B.S.", "M.Tech", "M.S.", "Ph.D", "PhD", "MBA", 
+    "Bachelor", "Master", "BCA", "MCA", "B.Sc", "M.Sc"
+]
+
+MASTER_LOCATIONS_LIST = [
+    "Pune", "Noida", "Hyderabad", "Mumbai", "Delhi", "Bangalore", "Bengaluru", 
+    "Gurgaon", "Gurugram", "Chennai", "Kolkata", "Remote", "India"
+]
+
+CONSULTING_FIRMS = [
+    "tcs", "tata consultancy services", "infosys", "wipro", "accenture", 
+    "cognizant", "capgemini", "wipro limited", "tcs e-serve", "infosys technologies",
+    "deloitte", "kpmg", "ey", "pwc", "ibm"
+]
+
+# The template that will be populated dynamically per JD
 DEFAULT_JD_REQUIREMENTS = {
-    "required_skills": [
-        ("Python", 1.0),
-        ("Machine Learning", 1.0),
-        ("embeddings-based retrieval", 1.0),
-        ("vector databases", 1.0),
-        ("search infrastructure", 1.0),
-        ("evaluation frameworks", 1.0),
-        ("Natural Language Processing", 0.9),
-        ("Information Retrieval", 0.8),
-        ("Data Analysis", 0.8),
-        ("PyTorch", 0.8),
-        ("TensorFlow", 0.8)
-    ],
+    "required_skills": [],
     "experience": {
-        "min_years": 4.0,
-        "target_years": 6.0,
-        "ideal_years": 8.0
+        "min_years": 0.0,
+        "target_years": 3.0,
+        "ideal_years": 5.0
     },
-    "preferred_titles": [
-        "Senior AI Engineer",
-        "Founding AI Engineer",
-        "Senior Machine Learning Engineer",
-        "ML Engineer",
-        "Senior Data Scientist",
-        "Data Scientist",
-        "AI Engineer",
-        "Staff AI Engineer"
-    ],
-    "required_education": ["B.Tech", "B.E.", "B.S.", "M.Tech", "M.S.", "Ph.D"],
-    "preferred_industries": ["Technology", "Software", "Internet", "AI", "Machine Learning"]
+    "preferred_titles": [],
+    "required_education": [],
+    "preferred_industries": ["Technology", "Software", "Internet"]
 }
 
 # Skill alias mappings for standardizing exact skill checks
@@ -81,11 +101,8 @@ SKILL_ALIASES = {
     "eval frameworks": "evaluation frameworks"
 }
 
-# Consulting firms that are explicitly disqualified
-DISQUALIFIED_CONSULTING_FIRMS = [
-    "tcs", "tata consultancy services", "infosys", "wipro", "accenture", 
-    "cognizant", "capgemini", "wipro limited", "tcs e-serve", "infosys technologies"
-]
+# The active disqualifications and locations will be populated at runtime
+DISQUALIFIED_CONSULTING_FIRMS = []
 
 # Preferred locations in India
-PREFERRED_LOCATIONS = ["pune", "noida", "hyderabad", "mumbai", "delhi", "bangalore"]
+PREFERRED_LOCATIONS = []

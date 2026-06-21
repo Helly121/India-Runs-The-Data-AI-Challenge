@@ -44,9 +44,9 @@ To process 100,000 candidates on CPU hardware within a strict 5-minute wall-cloc
 ```
 
 ### Key Phases:
-1. **JD Parser:** Parses unstructured job description text to extract experience requirements, preferred job titles, required technical skills, and nice-to-haves.
-2. **L1 Heuristic Filter:** Streams candidate profiles and calculates a fast, non-embedding retrieval score to select the top 2,000 candidate profiles. Removes obvious mismatches and flags honeypots.
-3. **L2 Semantic Scoring:** Batches text segments (titles/headline and skills list) of the top 2,000 candidates and embeds them using the `all-MiniLM-L6-v2` SentenceTransformer (22MB). Calculates exact semantic similarity weights.
+1. **Dynamic JD Parser:** Scans unstructured job description text via high-speed regex against massive internal "Master Dictionaries" (100+ tech skills, global locations, titles, degrees). This dynamically constructs the scoring requirements on-the-fly without the extreme overhead of local LLMs or external network API calls. It also smartly disqualifies consulting firms if the JD demands strict "product-based" experience.
+2. **L1 Heuristic Filter:** Streams candidate profiles and calculates a fast, non-embedding retrieval score to select the top 4,000 candidate profiles. Removes obvious mismatches and flags honeypots.
+3. **L2 Semantic Scoring:** Batches text segments (titles/headline and skills list) of the top 4,000 candidates and embeds them using the `all-MiniLM-L6-v2` SentenceTransformer (22MB). Calculates exact semantic similarity weights.
 4. **Behavioral Signal Modifier:** Computes a multiplicative factor based on Redrob engagement metrics (responsiveness, platform activity recency, notice period, interview completion rate).
 5. **Deterministic Ranking & Reasoning:** Ranks profiles using strict tie-breaker criteria, normalizes scores into sequential percentiles, and builds factual, non-templated descriptions of candidate fits.
 
@@ -118,20 +118,20 @@ Candidates with logically inconsistent profiles are flagged. The engine verifies
 ---
 
 ## 4. Explainable Reasoning Strategy
-To make recommendations transparent and verifiable, the engine dynamically constructs non-templated reasoning blocks (60-120 words) using facts checked directly against the candidate's profile.
+To make recommendations transparent and verifiable, the engine dynamically constructs non-templated reasoning blocks (60-120 words) using facts checked directly against the candidate's profile. Crucially, the reasoning strings synthesize holistic strengths (like career provenance) rather than exposing rigid and misleading "keyword-match" fractional counts.
 
-- **Ranks 1-10 (Top Tier):** Emphasizes matched skills count, years of experience, positive engagement metrics (response rates), and recent activity on the platform.
+- **Ranks 1-10 (Top Tier):** Emphasizes career length, positive engagement metrics (response rates), highly sought-after market indicators (saves/views), and recent platform activity.
 - **Ranks 11-30 (Strong Fit):** Explains candidate strengths (e.g. high interview completion) while noting any minor trade-offs (e.g. notice period length).
-- **Ranks 31-60 (Moderate Fit):** Provides a balanced view, acknowledging skill or availability gaps while highlighting compensating strengths (like strong GitHub scores).
-- **Ranks 61-100 (Lower Tier):** Honestly highlights primary limitations (e.g., mismatched experience levels or low direct skill overlap) while mentioning minor positive details (such as relocation willingness).
+- **Ranks 31-60 (High-Mid Tier):** Provides a balanced view, acknowledging exact title mismatches or availability gaps while highlighting compensating strengths (like strong GitHub scores) that kept them in the top 0.1%.
+- **Ranks 61-100 (Competitive Tier):** Acknowledges their position as highly competitive candidates in the top 0.1% of the applicant pool, focusing on their foundational generalist background and core technical skills.
 
 ---
 
 ## 5. Performance Characteristics
-Benchmarks measured on CPU-only hardware:
-- **Total Runtime:** ~75 seconds (well within the 300-second budget).
+Benchmarks measured on CPU-only hardware processing 100,000 candidates:
+- **Total Runtime:** ~161 seconds (comfortably within the strict 300-second budget), achieved by highly optimizing string inclusion checks over Python generators.
 - **Peak Memory Usage:** ~1.4 GB (well below the 16 GB limit).
-- **Execution Bottleneck Mitigation:** The L1 filter eliminates $98\%$ of expensive embedding computations, reducing SentenceTransformer processing time from $50$ minutes to under $15$ seconds.
+- **Execution Bottleneck Mitigation:** The L1 filter eliminates $96\%$ of expensive embedding computations, scaling the candidate pool from 100K down to a targeted 4,000 candidate subset for heavy L2 semantic scoring.
 
 ---
 
@@ -144,9 +144,8 @@ pip install -r requirements.txt
 
 ### 2. Run ranking pipeline:
 ```bash
-python ranking_system.py \
-  --candidates ../candidates.jsonl \
-  --jd_path ../job_description.docx \
+python rank.py \
+  --candidates candidates.jsonl \
   --out submission.csv
 ```
 

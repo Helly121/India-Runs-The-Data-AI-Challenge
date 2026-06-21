@@ -274,8 +274,13 @@ def calculate_skills_match_score(candidate, jd_requirements, embeddings):
     proficiency_boost = sum(proficiency_scores) / max(len(required_skills), 1) if proficiency_scores else 0.0
     proficiency_boost = min(proficiency_boost, 1.0)
     
+    # Direct Text Matching on Past Job Descriptions
+    career_history_text = " ".join([h.get("description", "") for h in candidate.get("career_history", [])]).lower()
+    proven_skills = sum(1 for req in required_skills if req in career_history_text)
+    proven_skills_score = min(proven_skills / max(len(required_skills), 1), 1.0)
+    
     # Combine signals
-    skills_match = max(exact_match_score, semantic_score) * 0.7 + proficiency_boost * 0.3
+    skills_match = max(exact_match_score, semantic_score) * 0.5 + proven_skills_score * 0.3 + proficiency_boost * 0.2
     return min(skills_match, 1.0)
 
 def calculate_experience_relevance_score(candidate, jd_requirements):
@@ -392,6 +397,28 @@ def calculate_education_fit_score(candidate, jd_requirements):
     
     education_fit = (degree_relevance * 0.4 + field_match * 0.35 + tier_score * 0.25) * recency_bonus
     return min(education_fit, 1.0)
+
+def calculate_summary_alignment_score(candidate, jd_requirements, embeddings):
+    """Evaluates semantic similarity between candidate summary and JD."""
+    candidate_id = candidate["candidate_id"]
+    summary_emb = embeddings.get("summary_" + candidate_id)
+    jd_emb = embeddings.get("jd_full")
+    
+    if summary_emb is not None and jd_emb is not None:
+        semantic_sim = cosine_similarity_np(summary_emb, jd_emb)
+        return max(0.0, min(1.0, (semantic_sim + 1.0) / 2.0))
+    return 0.0
+
+def calculate_career_alignment_score(candidate, jd_requirements, embeddings):
+    """Evaluates semantic similarity between entire career history and JD."""
+    candidate_id = candidate["candidate_id"]
+    career_emb = embeddings.get("career_" + candidate_id)
+    jd_emb = embeddings.get("jd_full")
+    
+    if career_emb is not None and jd_emb is not None:
+        semantic_sim = cosine_similarity_np(career_emb, jd_emb)
+        return max(0.0, min(1.0, (semantic_sim + 1.0) / 2.0))
+    return 0.0
 
 
 class CandidateRankingEngine:
@@ -540,6 +567,10 @@ class CandidateRankingEngine:
         jd_skills_text = ", ".join([s[0] for s in self.jd_requirements["required_skills"]])
         self.embeddings_cache["jd_requirements"] = model.encode(jd_skills_text)
         
+        # Embed JD Full (for summary/career matching)
+        jd_full_text = getattr(self, 'jd_text', jd_skills_text)[:1000]
+        self.embeddings_cache["jd_full"] = model.encode(jd_full_text)
+        
         # Embed JD Primary Title
         self.embeddings_cache["preferred_title_0"] = model.encode(self.jd_requirements["preferred_titles"][0])
         
@@ -547,6 +578,8 @@ class CandidateRankingEngine:
         print(f"Stage 2: Embedding profiles for {len(self.candidates_l1)} selected candidates...")
         titles_to_embed = []
         skills_to_embed = []
+        summaries_to_embed = []
+        careers_to_embed = []
         cids = []
         
         for cand in self.candidates_l1:
@@ -554,20 +587,28 @@ class CandidateRankingEngine:
             current_title = cand.get("profile", {}).get("current_title", "")
             headline = cand.get("profile", {}).get("headline", "")
             skills_text = ", ".join([s["name"] for s in cand.get("skills", [])])
+            summary_text = cand.get("profile", {}).get("summary", "")
+            career_text = " ".join([h.get("description", "") for h in cand.get("career_history", [])])
             
             title_text = f"{current_title} {headline}".strip()
             
             titles_to_embed.append(title_text)
             skills_to_embed.append(skills_text if skills_text else "None")
+            summaries_to_embed.append(summary_text if summary_text else "None")
+            careers_to_embed.append(career_text if career_text else "None")
             cids.append(cid)
             
         # Multi-threaded batched embedding generation
         title_embs = model.encode(titles_to_embed, batch_size=128, show_progress_bar=False)
         skills_embs = model.encode(skills_to_embed, batch_size=128, show_progress_bar=False)
+        summary_embs = model.encode(summaries_to_embed, batch_size=128, show_progress_bar=False)
+        career_embs = model.encode(careers_to_embed, batch_size=128, show_progress_bar=False)
         
         for i, cid in enumerate(cids):
             self.embeddings_cache["title_" + cid] = title_embs[i]
             self.embeddings_cache["skills_" + cid] = skills_embs[i]
+            self.embeddings_cache["summary_" + cid] = summary_embs[i]
+            self.embeddings_cache["career_" + cid] = career_embs[i]
             
         print("Embeddings generated and cached successfully.")
         
@@ -587,12 +628,16 @@ class CandidateRankingEngine:
                 e_score = calculate_experience_relevance_score(cand, self.jd_requirements)
                 t_score = calculate_title_alignment_score(cand, self.jd_requirements, self.embeddings_cache)
                 ed_score = calculate_education_fit_score(cand, self.jd_requirements)
+                sum_score = calculate_summary_alignment_score(cand, self.jd_requirements, self.embeddings_cache)
+                car_score = calculate_career_alignment_score(cand, self.jd_requirements, self.embeddings_cache)
                 
                 base_score = (
                     s_score * WEIGHTS["skills"] +
                     e_score * WEIGHTS["experience"] +
                     t_score * WEIGHTS["title"] +
-                    ed_score * WEIGHTS["education"]
+                    ed_score * WEIGHTS["education"] +
+                    sum_score * WEIGHTS["summary_alignment"] +
+                    car_score * WEIGHTS["career_alignment"]
                 )
                 
                 mult = calculate_behavioral_multiplier(cand.get("redrob_signals", {}))
@@ -602,7 +647,9 @@ class CandidateRankingEngine:
                     "skills": s_score,
                     "experience": e_score,
                     "title": t_score,
-                    "education": ed_score
+                    "education": ed_score,
+                    "summary_alignment": sum_score,
+                    "career_alignment": car_score
                 }
                 
             self.scored_list.append({
@@ -652,17 +699,18 @@ class CandidateRankingEngine:
             title = cand.get("profile", {}).get("current_title", "Engineer")
             years = cand.get("profile", {}).get("years_of_experience", 0.0)
             
-            # Required skills count matching standard skills
+            # Required skills count matching standard skills AND career history text
             required_skill_names = [s[0].lower() for s in self.jd_requirements["required_skills"]]
             candidate_skills = [s["name"].lower() for s in cand.get("skills", [])]
             candidate_skills_std = [SKILL_ALIASES.get(s, s) for s in candidate_skills]
-            matched_skills = sum(1 for req in required_skill_names if any(req in cand_s for cand_s in candidate_skills_std))
+            career_history_text = " ".join([h.get("description", "") for h in cand.get("career_history", [])]).lower()
+            
+            matched_skills = sum(1 for req in required_skill_names if (any(req in cand_s for cand_s in candidate_skills_std) or req in career_history_text))
             total_req_skills = len(required_skill_names)
             
             facts = []
             # Core description
             facts.append(f"{title} with {years:.1f} yrs experience")
-            facts.append(f"matched {matched_skills} of {total_req_skills} core AI/ML skills")
             
             # Recruiter activity & response details
             resp_rate = signals.get("recruiter_response_rate", 0.0)
@@ -719,7 +767,6 @@ class CandidateRankingEngine:
             
             # Simple assertions to prevent hallucination (every claim verified in profile)
             assert str(round(years, 1)) in reasoning or str(int(years)) in reasoning, "Year mismatch"
-            assert str(matched_skills) in reasoning, "Skill match count mismatch"
             assert f"{resp_rate:.2f}" in reasoning, "Response rate mismatch"
             
             item["reasoning"] = reasoning

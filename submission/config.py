@@ -1,7 +1,7 @@
 # Configuration parameters for Intelligent Candidate Ranking System
 
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-L1_POOL_SIZE = 2000
+L1_POOL_SIZE = 4000
 NUM_WORKERS = 8
 
 # Core weights for final base score (sum = 1.0)
@@ -9,7 +9,9 @@ WEIGHTS = {
     "skills": 0.30,
     "experience": 0.25,
     "title": 0.15,
-    "education": 0.10
+    "education": 0.10,
+    "summary_alignment": 0.10,
+    "career_alignment": 0.10
 }
 
 # Behavioral sub-weights (sum = 1.0)

@@ -94,7 +94,8 @@ def detect_honeypot(candidate):
     Checks for logically impossible combinations in candidate profile.
     Returns (is_honeypot, list_of_issues)
     """
-    issues = []
+    fatal_issues = []
+    minor_issues = []
     
     # Check 1: Stated years of experience vs career history duration
     total_work_months = sum(job.get("duration_months", 0) for job in candidate.get("career_history", []))
@@ -102,19 +103,23 @@ def detect_honeypot(candidate):
     
     # If career history exceeds stated experience by more than 2 years (24 months)
     if total_work_months / 12.0 > stated_years + 2.0:
-        issues.append("Career history exceeds stated experience")
+        minor_issues.append("Career history exceeds stated experience by > 2 years")
+        
+    # Under-reporting lie: Stated years exceeds career history by more than 2 years
+    if stated_years > (total_work_months / 12.0) + 2.0:
+        minor_issues.append("Stated experience exceeds career history by > 2 years")
         
     if stated_years > 50.0:
-        issues.append("Implausibly long experience")
+        fatal_issues.append("Implausibly long experience (>50 years)")
         
     # Check 2: Skill proficiency vs duration
     for s in candidate.get("skills", []):
         prof = s.get("proficiency", "").lower()
         duration = s.get("duration_months", 0)
         if prof == "expert" and duration == 0:
-            issues.append(f"Expert proficiency in {s.get('name')} with 0 months duration")
+            fatal_issues.append(f"Expert proficiency in {s.get('name')} with 0 months duration")
         if prof == "expert" and duration < 12:
-            issues.append(f"Expert proficiency in {s.get('name')} with <1 year duration")
+            minor_issues.append(f"Expert proficiency in {s.get('name')} with <1 year duration")
             
     # Check 3: Education completion vs job start date
     education = candidate.get("education", [])
@@ -122,19 +127,20 @@ def detect_honeypot(candidate):
     if education and career_history:
         try:
             earliest_grad_year = min(edu.get("end_year", 9999) for edu in education)
-            
             # Start years of career history jobs
             job_start_years = []
             for job in career_history:
                 start_date = job.get("start_date")
-                if start_date:
-                    job_start_years.append(datetime.strptime(start_date, "%Y-%m-%d").year)
+                if start_date and len(start_date) >= 4:
+                    try:
+                        job_start_years.append(int(start_date[:4]))
+                    except ValueError:
+                        pass
             
             if job_start_years:
                 earliest_job_year = min(job_start_years)
-                # Flag if worked more than 1 year before graduating
                 if earliest_job_year < earliest_grad_year - 1:
-                    issues.append("Timeline conflict: worked before graduating")
+                    minor_issues.append("Timeline conflict: worked before graduating")
         except Exception:
             pass
             
@@ -143,17 +149,28 @@ def detect_honeypot(candidate):
     if len(skills) > 40:
         expert_count = sum(1 for s in skills if s.get("proficiency", "").lower() == "expert")
         if expert_count > len(skills) * 0.6:
-            issues.append("Implausibly high expert skill count")
+            minor_issues.append("Implausibly high expert skill count")
             
-    # Check 5: Entry level contradictions (junior with massive skills list)
+    # Check 5: Entry level contradictions
     if stated_years < 1.0 and len(skills) > 15:
-        issues.append("Too many skills for entry-level candidate")
+        minor_issues.append("Too many skills for entry-level candidate")
         
-    # Heuristic: 3 or more issues makes it a honeypot
-    honeypot_score = len(issues) / 6.0
-    is_honeypot = honeypot_score > 0.4
+    # Check 6: Concurrent Job Spam
+    current_jobs_count = sum(1 for job in career_history if job.get("is_current") is True)
+    if current_jobs_count >= 3:
+        minor_issues.append("Implausible concurrent job count (>=3 current jobs)")
+
+    # Check 7: Signal Bounds
+    signals = candidate.get("redrob_signals", {})
+    if signals.get("recruiter_response_rate", 0.0) > 1.0 or signals.get("recruiter_response_rate", 0.0) < 0.0:
+        fatal_issues.append("Impossible recruiter response rate")
+    if signals.get("interview_completion_rate", 0.0) > 1.0 or signals.get("interview_completion_rate", 0.0) < 0.0:
+        fatal_issues.append("Impossible interview completion rate")
+        
+    # Zero Trust Heuristic
+    is_honeypot = len(fatal_issues) >= 1 or len(minor_issues) >= 2
     
-    return is_honeypot, issues
+    return is_honeypot, fatal_issues + minor_issues
 
 def calculate_behavioral_multiplier(signals):
     """
@@ -223,6 +240,12 @@ def calculate_behavioral_multiplier(signals):
         market_mult = 0.9
     else:
         market_mult = 1.0
+        
+    github_score = signals.get("github_activity_score", -1)
+    if github_score > 80:
+        market_mult += 0.10
+    elif github_score > 50:
+        market_mult += 0.05
         
     # Combine signals
     behavioral_multiplier = (
@@ -549,14 +572,43 @@ class CandidateRankingEngine:
         
     def _calculate_l1_score(self, candidate):
         """Heuristic scoring helper for fast pruning."""
-        # 1. Fast skills match
+        # 1. Fast skills match + Deep Text Search + Proficiency Weighting
         required_skill_names = [s[0].lower() for s in self.jd_requirements["required_skills"]]
-        candidate_skills = [s["name"].lower() for s in candidate.get("skills", [])]
         
-        candidate_skills_std = [SKILL_ALIASES.get(s, s) for s in candidate_skills]
-        cand_str = " ".join(candidate_skills_std)
-        exact_matches = sum(1 for req in required_skill_names if req in cand_str)
-        skills_match_fast = exact_matches / max(len(required_skill_names), 1)
+        cand_skills_dict = {}
+        for s in candidate.get("skills", []):
+            skill_name = SKILL_ALIASES.get(s["name"].lower(), s["name"].lower())
+            prof = s.get("proficiency", "intermediate").lower()
+            cand_skills_dict[skill_name] = prof
+            
+        cand_str = " ".join(cand_skills_dict.keys())
+        career_history_text = " ".join([h.get("description", "") for h in candidate.get("career_history", [])]).lower()
+        
+        prof_weights = {"expert": 1.2, "advanced": 1.0, "intermediate": 0.7, "beginner": 0.4}
+        
+        assessments = candidate.get("redrob_signals", {}).get("skill_assessment_scores", {})
+        assessments_lower = {k.lower(): v for k, v in assessments.items()}
+        
+        skills_score = 0.0
+        for req in required_skill_names:
+            assessment_score = assessments_lower.get(req)
+            if assessment_score is not None:
+                if assessment_score > 85:
+                    skills_score += 1.2
+                elif assessment_score > 70:
+                    skills_score += 1.0
+                elif assessment_score > 50:
+                    skills_score += 0.7
+                else:
+                    skills_score += 0.4
+            elif req in cand_str:
+                prof = cand_skills_dict.get(req, "intermediate")
+                skills_score += prof_weights.get(prof, 0.7)
+            elif req in career_history_text:
+                skills_score += 0.7  # Found in deep text, assume intermediate
+                
+        skills_match_fast = skills_score / max(len(required_skill_names), 1)
+        skills_match_fast = min(skills_match_fast, 1.0)
         
         # 2. Experience relevance fast
         years = candidate.get("profile", {}).get("years_of_experience", 0.0)
@@ -573,25 +625,47 @@ class CandidateRankingEngine:
         else:
             exp_score = 1.0
             
-        # 3. Title alignment fast
+        # 3. Title alignment fast (Dynamic Role Extraction Fix)
         current_title = candidate.get("profile", {}).get("current_title", "").lower()
         preferred_titles = [t.lower() for t in self.jd_requirements["preferred_titles"]]
         
         if current_title in preferred_titles:
             title_score = 1.0
         else:
-            # Dynamically use words from preferred titles as keywords
             all_title_words = set(word for t in preferred_titles for word in t.split())
             has_keywords = any(kw in current_title for kw in all_title_words if len(kw) > 2)
-            is_engineer = any(kw in current_title for kw in ["engineer", "developer", "programmer", "backend"])
+            
+            base_roles = set(t.split()[-1] for t in preferred_titles if t.split())
+            has_base_role = any(role in current_title for role in base_roles if len(role) > 2)
+            
             if has_keywords:
                 title_score = 0.7
-            elif is_engineer:
+            elif has_base_role:
                 title_score = 0.4
             else:
                 title_score = 0.1
                 
+        # Negative Pruning: Intern/Junior penalty for senior roles
+        if target_years > 5 and any(w in current_title for w in ["intern", "trainee", "junior", "student"]):
+            title_score *= 0.5
+                
         base_fast = skills_match_fast * 0.4 + exp_score * 0.3 + title_score * 0.3
+        
+        # 4. Geographical & Educational Boosts
+        location = candidate.get("profile", {}).get("location", "").lower()
+        global PREFERRED_LOCATIONS
+        if location and any(ploc.lower() in location for ploc in PREFERRED_LOCATIONS):
+            base_fast += 0.05
+            
+        education_list = candidate.get("education", [])
+        if education_list:
+            top_tier = education_list[0].get("tier", "")
+            if top_tier == "tier_1":
+                base_fast += 0.10
+            elif top_tier == "tier_2":
+                base_fast += 0.05
+                
+        base_fast = min(base_fast, 1.0)
         
         # Behavioral signals
         signals = candidate.get("redrob_signals", {})

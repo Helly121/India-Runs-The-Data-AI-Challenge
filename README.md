@@ -19,10 +19,10 @@ To process 100,000 candidates on CPU hardware within a strict 5-minute wall-cloc
                   ┌─────────────────────────────────────┐
                   │    Stage 1: Heuristic L1 Filter     │
                   │   - Fast exact skill overlap count  │
-                  │   - Quick title keyword alignment   │
-                  │   - Fast experience level checking  │
-                  │   - Notice period & activity mult   │
-                  │   - Honeypot timeline logic         │
+                  │   - Deep text career-skill extraction │
+                  │   - Quick title & base-role alignment │
+                  │   - Truth-serum skill assessments   │
+                  │   - Zero-Trust honeypot engine      │
                   └──────────────────┬──────────────────┘
                                      │
                                      ▼ (Pruned to Top 2,000)
@@ -71,7 +71,7 @@ $$\text{Final Score} = \left( \begin{aligned}
 Evaluates candidate capabilities through exact keyword matching and semantic context.
 - **Exact Match (70%):** Standardizes candidate skill names using an alias dictionary (e.g., standardizing `NLP` and `Natural Language Processing`) and counts occurrences of must-have JD skills.
 - **Semantic Match:** Computes the cosine similarity between candidate skill lists and required skills using SentenceTransformers.
-- **Proficiency Boost (30%):** Multiplies proficiency levels (`expert = 1.0`, `advanced = 0.75`, `intermediate = 0.5`, `beginner = 0.25`) by normalized endorsements count ($\frac{\text{endorsements}}{50}$) for required skills.
+- **Truth-Serum Override (30%):** Validates self-reported proficiency against Redrob `skill_assessment_scores`. If a candidate claims "Expert" but scores <50% on a verified assessment, their score is slashed to "Beginner" (0.25). Verified high scores solidify their maximum multiplier.
 
 #### B. Experience Relevance Score (Weight: 0.25)
 Combines quantitative experience matching with qualitative trajectory scoring.
@@ -100,20 +100,26 @@ Hiring is about availability as much as skills. Redrob signals are aggregated in
 2. **Platform Recency (30%):** Multiplier based on the candidate's last active date (e.g. $<7$ days receives a $1.1$ boost, while $>90$ days gets a heavy $0.5$ penalty).
 3. **Availability (15%):** Boosts candidates with an active `open_to_work_flag` ($+0.05$) or a short notice period ($<30$ days, $+0.05$).
 4. **Conversion Probability (15%):** Boosts candidates with historical high interview completion rates ($>85\%$) and offer acceptance rates ($>70\%$).
-5. **Market Validation (5%):** Small boost if views/saves/searches in the last 30 days are high ($>15$).
+5. **Market Validation (5%):** Small boost if views/saves/searches in the last 30 days are high ($>15$). Additionally, candidates with elite `github_activity_score` (>80) receive a flat $+0.10$ multiplier injection to reward verified open-source contributors.
 
 ---
 
-## 3. Honeypot Detection Filter
-Candidates with logically inconsistent profiles are flagged. The engine verifies 5 logical rules:
-1. **Timeline Check:** Stated experience years must match the sum of durations in career history (within 24 months).
-2. **Improbable Durations:** Stated experience must not exceed 50 years.
-3. **Skill Duration:** Candidates cannot claim "expert" proficiency in a skill with 0 months of use, or expert level with $<12$ months of use.
-4. **Education Timeline:** Graduating end year must be consistent with the start year of their earliest employment (within 1 year buffer).
-5. **Skill Explosion:** Profiles with $>40$ skills where $>60\%$ are marked "expert" are flagged.
-6. **Entry-level Paradox:** Stated experience $<1$ year but listing $>15$ skills is flagged.
+## 3. Zero-Trust Honeypot Filter
+Candidates with logically inconsistent profiles or simulated spam data are flagged using a rigorous two-tier system (Fatal vs Minor strikes):
 
-**Action:** $3+$ flags identify a profile as a honeypot, forcing its final score to $0.0$ and pushing it to the bottom.
+**Fatal Issues (Instant Disqualification):**
+- **Improbable Durations:** Stated experience exceeding 50 years.
+- **Skill Duration Paradox:** Claiming "expert" proficiency in a skill with exactly 0 months of use.
+- **Impossible Engagement Signals:** `recruiter_response_rate` > 1.0 or < 0.0.
+
+**Minor Issues (2 Strikes = Disqualification):**
+- **Timeline Check:** Stated experience years exceeds the sum of durations in career history by >24 months.
+- **Under-reporting Lie:** Stated experience exceeds career history duration by >24 months.
+- **Concurrent Job Spam:** Claiming to hold 3 or more full-time jobs concurrently.
+- **Education Timeline:** Graduating end year conflicting with the start year of earliest employment.
+- **Skill Explosion / Entry-level Paradox:** Listing >40 skills where >60% are "expert", or having <1 year experience but >15 skills.
+
+**Action:** Accumulating 1 Fatal Strike or 2 Minor Strikes identifies a profile as a honeypot, forcing its final score to $0.0$.
 
 ---
 
@@ -129,7 +135,7 @@ To make recommendations transparent and verifiable, the engine dynamically const
 
 ## 5. Performance Characteristics
 Benchmarks measured on CPU-only hardware processing 100,000 candidates:
-- **Total Runtime:** ~161 seconds (comfortably within the strict 300-second budget), achieved by highly optimizing string inclusion checks over Python generators.
+- **Total Runtime:** ~285 seconds (safely within the strict 300-second budget), achieved by highly optimizing string inclusion checks and raw string slicing `int(start_date[:4])` over heavy `datetime` parsing loops.
 - **Peak Memory Usage:** ~1.4 GB (well below the 16 GB limit).
 - **Execution Bottleneck Mitigation:** The L1 filter eliminates $96\%$ of expensive embedding computations, scaling the candidate pool from 100K down to a targeted 4,000 candidate subset for heavy L2 semantic scoring.
 

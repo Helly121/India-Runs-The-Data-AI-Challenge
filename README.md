@@ -20,7 +20,7 @@ To process 100,000 candidates on CPU hardware within a strict 5-minute wall-cloc
                   │    Stage 1: Heuristic L1 Filter     │
                   │   - Fast exact skill overlap count  │
                   │   - Deep text skill extraction      │
-                  │   - Quick title & role alignment │
+                  │   - Quick title & role alignment    │
                   │   - Truth-serum skill assessments   │
                   │   - Zero-Trust honeypot engine      │
                   └──────────────────┬──────────────────┘

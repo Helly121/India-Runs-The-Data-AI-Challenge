@@ -677,7 +677,7 @@ class CandidateRankingEngine:
             from sentence_transformers import SentenceTransformer as ST
             SentenceTransformer = ST
             
-        model = SentenceTransformer(EMBEDDING_MODEL, local_files_only=True)
+        model = SentenceTransformer(EMBEDDING_MODEL)
         
         # Embed JD Requirements
         jd_skills_text = ", ".join([s[0] for s in self.jd_requirements["required_skills"]])

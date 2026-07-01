@@ -1,1 +1,1 @@
-run = "python rank.py --candidates candidates.jsonl --out submission.csv"
+run = "python3 rank.py --candidates candidates.jsonl --out submission.csv"

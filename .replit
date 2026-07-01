@@ -1,1 +1,1 @@
-run = "python3 rank.py --candidates candidates.jsonl --out submission.csv"
+run = "pip install -r requirements.txt && python3 rank.py --candidates candidates.jsonl --out submission.csv"

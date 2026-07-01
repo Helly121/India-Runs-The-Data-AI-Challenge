@@ -152,7 +152,11 @@ pip install -r requirements.txt
 
 ### 2. Run ranking pipeline:
 ```bash
+# Full dataset
 python rank.py --candidates candidates.jsonl --out submission.csv
+
+# Sandbox sample (100 candidates)
+python rank.py --candidates candidates_sample.jsonl --out submission.csv
 ```
 
 ### 3. Run validation scripts:

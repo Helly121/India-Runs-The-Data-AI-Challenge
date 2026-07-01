@@ -864,9 +864,7 @@ class CandidateRankingEngine:
             ]
             
             # Clause 1: Intro
-            if rank > 80 and len(matched_specifics) <= 1:
-                clauses.append("adjacent skills only \u2014 likely below cutoff but included as final filler given experience and engagement signals")
-            elif cid_num % 3 == 0 and len(matched_specifics) >= 2:
+            if cid_num % 3 == 0 and len(matched_specifics) >= 2:
                 intro_verbs = ["Strong", "Solid", "Deep"]
                 clauses.append(f"{intro_verbs[cid_num % 3]} {matched_specifics[0]} + {matched_specifics[1]} background")
             elif cid_num % 3 == 1 and "product" in career_history_text:
@@ -886,7 +884,7 @@ class CandidateRankingEngine:
                     clauses.append(f"{title} with {years_fmt} years experience")
                     
             # Clause 2: Career/Skills Highlight
-            if len(clauses) == 1 and not clauses[0].startswith("adjacent"):
+            if len(clauses) == 1:
                 if rank <= 30 and "product" in career_history_text and cid_num % 2 == 0:
                     clauses.append(product_phrases[(cid_num + 1) % len(product_phrases)])
                 elif len(matched_specifics) >= 3:
@@ -907,7 +905,7 @@ class CandidateRankingEngine:
             if location and PREFERRED_LOCATIONS:
                 is_preferred_loc = any(ploc.lower() in location.lower() for ploc in PREFERRED_LOCATIONS)
             
-            if not clauses[0].startswith("adjacent") and len(clauses) < 3:
+            if len(clauses) < 3:
                 if notice >= 90:
                     phrase = notice_phrases[cid_num % len(notice_phrases)]
                     clauses.append(phrase.format(days=notice))

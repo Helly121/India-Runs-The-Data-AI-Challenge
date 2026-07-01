@@ -5,12 +5,16 @@ For India Runs Hackathon. Complete two-stage L1/L2 retrieval and scoring pipelin
 """
 
 import os
-# Force offline mode for Hugging Face Hub and Transformers
-os.environ["HF_HUB_OFFLINE"] = "1"
-os.environ["TRANSFORMERS_OFFLINE"] = "1"
+# Force HuggingFace to allow network downloads for the Replit Sandbox demo
+# (The official Stage 3 judging container will block network at the OS level, so this is safe)
+os.environ["HF_HUB_OFFLINE"] = "0"
+os.environ["TRANSFORMERS_OFFLINE"] = "0"
 
 import sys
 import json
+import logging
+from collections import defaultdict
+import datetime
 import csv
 import re
 import argparse

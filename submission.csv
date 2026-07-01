@@ -1,0 +1,101 @@
+candidate_id,rank,score,reasoning
+CAND_0053591,1,1.0000,"AI Engineer with 5.3 years experience; proven track record utilizing Langchain alongside Embeddings; highly qualified, but geographically outside preferred zones (Toronto)."
+CAND_0088025,2,0.9899,Staff Machine Learning Engineer with 8.6 years experience; proven track record utilizing Xgboost alongside LLM; 90-day notice period is a minor constraint given strong technical alignment.
+CAND_0044222,3,0.9798,"AI Engineer with 7.7 years architecting Xgboost systems at product companies; shows clear orientation towards shipping product rather than just R&D; highly qualified, but geographically outside preferred zones (Vizag)."
+CAND_0078810,4,0.9697,"Strong NLP + Computer Vision background; career history aligns well with our product-driven needs; longer notice period (120 days), though skills are highly relevant."
+CAND_0081846,5,0.9596,Strong Python + LLM background; demonstrates hands-on product delivery experience; strong candidate but based outside preferred locations (Jaipur).
+CAND_0011687,6,0.9495,"Senior NLP Engineer with 7.8 years experience; proven track record utilizing Langchain alongside Embeddings; highly qualified, but geographically outside preferred zones (Indore)."
+CAND_0077337,7,0.9394,Strong Python + LLM background; core expertise spanning LLM and Embeddings; strong candidate but based outside preferred locations (Kochi).
+CAND_0055905,8,0.9293,Strong Python + LLM background; core expertise spanning LLM and Langchain; strong candidate but based outside preferred locations (London).
+CAND_0058688,9,0.9192,"AI Engineer with 6.7 years architecting Computer Vision systems at product companies; strong product-focused background over pure research; highly qualified, but geographically outside preferred zones (Berlin)."
+CAND_0068351,10,0.9091,Lead AI Engineer with 6.4 years experience; proven track record utilizing Vector Databases alongside Search Infrastructure; excellent response metrics and Delhi-based.
+CAND_0067866,11,0.8990,Strong NLP + Embeddings background; demonstrates hands-on product delivery experience; highly sought after in the current market.
+CAND_0030031,12,0.8889,5.7 years applied AI; has deployed python at scale; career history aligns well with our product-driven needs.
+CAND_0046064,13,0.8788,"Senior NLP Engineer with 8.9 years architecting Python systems at product companies; matches the 'product over research' profile in the JD; highly qualified, but geographically outside preferred zones (Coimbatore)."
+CAND_0064904,14,0.8687,AI Engineer with 4.9 years architecting Python systems at product companies; matches the 'product over research' profile in the JD; some concern on notice period (90 days) but otherwise strong fit.
+CAND_0055992,15,0.8586,Strong LLM + Langchain background; shows clear orientation towards shipping product rather than just R&D; strong candidate but based outside preferred locations (Sydney).
+CAND_0004402,16,0.8485,6 years applied AI Research; has deployed nlp at scale; demonstrates hands-on product delivery experience.
+CAND_0079387,17,0.8384,6.9 years applied AI; has deployed python at scale; demonstrates hands-on product delivery experience.
+CAND_0082086,18,0.8283,Strong NLP + Computer Vision background; demonstrates hands-on product delivery experience; strong recent engagement and Delhi-based.
+CAND_0053605,19,0.8182,6.9 years applied Software  (ML); has deployed nlp at scale; matches the 'product over research' profile in the JD.
+CAND_0060054,20,0.8081,Strong Xgboost + Embeddings background; matches the 'product over research' profile in the JD; strong candidate but based outside preferred locations (Jaipur).
+CAND_0046525,21,0.7980,6.1 years applied Machine Learning; has deployed llm at scale; matches the 'product over research' profile in the JD.
+CAND_0062247,22,0.7879,Strong Computer Vision + Vector Databases background; core expertise spanning Vector Databases and Elasticsearch; strong candidate but based outside preferred locations (Kochi).
+CAND_0070514,23,0.7778,"AI Specialist with 5.5 years architecting Python systems at product companies; matches the 'product over research' profile in the JD; highly qualified, but geographically outside preferred zones (Bangalore)."
+CAND_0002025,24,0.7677,Strong Python + LLM background; core expertise spanning LLM and Langchain; strong candidate but based outside preferred locations (Trivandrum).
+CAND_0089381,25,0.7576,Computer Vision Engineer with 6 years experience; proven track record utilizing NLP alongside Computer Vision; 90-day notice period is a minor constraint given strong technical alignment.
+CAND_0052744,26,0.7475,4.9 years applied Software  (ML); has deployed nlp at scale; strong product-focused background over pure research.
+CAND_0097079,27,0.7374,"Computer Vision Engineer with 5.7 years experience; proven track record utilizing Computer Vision alongside LLM; excellent fit, though constrained by a 90-day notice period."
+CAND_0052682,28,0.7273,"NLP Engineer with 6.6 years architecting Python systems; proven track record utilizing LLM alongside Embeddings; highly qualified, but geographically outside preferred zones (Vizag)."
+CAND_0064326,29,0.7172,Strong Python + Xgboost background; demonstrates hands-on product delivery experience; strong candidate but based outside preferred locations (Gurgaon).
+CAND_0050454,30,0.7071,Strong LLM + Langchain background; matches the 'product over research' profile in the JD; highly sought after in the current market.
+CAND_0044883,31,0.6970,"Strong Computer Vision + Xgboost background; core expertise spanning Xgboost and LLM; excellent fit, though constrained by a 90-day notice period."
+CAND_0091534,32,0.6869,16.6 years applied AI; has deployed langchain at scale; strong product-focused background over pure research.
+CAND_0020954,33,0.6768,"Senior Software Engineer with 7.1 years architecting Python systems; proven track record utilizing Computer Vision alongside Search Infrastructure; longer notice period (90 days), though skills are highly relevant."
+CAND_0032271,34,0.6667,"Strong NLP + Computer Vision background; core expertise spanning Computer Vision and Xgboost; excellent fit, though constrained by a 120-day notice period."
+CAND_0093401,35,0.6566,AI Specialist with 6 years experience; proven track record utilizing Computer Vision alongside Xgboost; 120-day notice period is a minor constraint given strong technical alignment.
+CAND_0098846,36,0.6465,"AI Engineer with 7.6 years architecting Embeddings systems at product companies; proven track record utilizing Vector Databases alongside Pinecone; highly qualified, but geographically outside preferred zones (Indore)."
+CAND_0093763,37,0.6364,5 years applied Software  (ML); has deployed nlp at scale; shows clear orientation towards shipping product rather than just R&D.
+CAND_0049538,38,0.6263,"Applied ML Engineer with 5.8 years architecting Computer Vision systems at product companies; proven track record utilizing LLM alongside Embeddings; highly qualified, but geographically outside preferred zones (Jaipur)."
+CAND_0077498,39,0.6162,"Senior Software Engineer (ML) with 5.4 years architecting NLP systems; proven track record utilizing Embeddings alongside Vector Databases; highly qualified, but geographically outside preferred zones (Ahmedabad)."
+CAND_0049540,40,0.6061,6.8 years applied ML; has deployed nlp at scale; matches the 'product over research' profile in the JD.
+CAND_0076163,41,0.5960,"NLP Engineer with 6.9 years experience; proven track record utilizing Langchain alongside Embeddings; highly qualified, but geographically outside preferred zones (Chandigarh)."
+CAND_0005538,42,0.5859,"Strong Python + Embeddings background; demonstrates solid Embeddings capabilities; longer notice period (90 days), though skills are highly relevant."
+CAND_0078785,43,0.5758,AI Research Engineer with 6.3 years experience; proven track record utilizing Computer Vision alongside LLM; 120-day notice period is a minor constraint given strong technical alignment.
+CAND_0006567,44,0.5657,Senior AI Engineer with 7.9 years experience; demonstrates solid Python capabilities; highly sought after in the current market.
+CAND_0063622,45,0.5556,5.2 years applied Computer Vision; has deployed nlp at scale; demonstrates hands-on product delivery experience.
+CAND_0074921,46,0.5455,Senior Data Engineer with 5.3 years experience; demonstrates solid Search Infrastructure capabilities; 120-day notice period is a minor constraint given strong technical alignment.
+CAND_0033445,47,0.5354,6.8 years applied ML; has deployed nlp at scale; matches the 'product over research' profile in the JD.
+CAND_0010685,48,0.5253,"NLP Engineer with 6.7 years experience; proven track record utilizing Langchain alongside Search Infrastructure; highly qualified, but geographically outside preferred zones (Kolkata)."
+CAND_0071974,49,0.5152,7.8 years applied AI; has deployed xgboost at scale; strong product-focused background over pure research.
+CAND_0011327,50,0.5051,"AI Research Engineer with 6.3 years experience; proven track record utilizing Embeddings alongside Search Infrastructure; highly qualified, but geographically outside preferred zones (Gurgaon)."
+CAND_0075574,51,0.4949,5.7 years applied Machine Learning; has deployed xgboost at scale; strong product-focused background over pure research.
+CAND_0069643,52,0.4848,"Senior Software Engineer with 7.1 years experience; demonstrates solid Vector Databases capabilities; excellent fit, though constrained by a 90-day notice period."
+CAND_0002120,53,0.4747,"ML Engineer with 6.5 years architecting NLP systems at product companies; proven track record utilizing Embeddings alongside Vector Databases; highly qualified, but geographically outside preferred zones (Berlin)."
+CAND_0050425,54,0.4646,7.3 years applied Data; has deployed python at scale; matches the 'product over research' profile in the JD.
+CAND_0059246,55,0.4545,"DevOps Engineer with 8.9 years architecting Vector Databases systems at product companies; demonstrates solid Search Infrastructure capabilities; longer notice period (90 days), though skills are highly relevant."
+CAND_0039546,56,0.4444,"Strong Python + Vector Databases background; demonstrates solid Vector Databases capabilities; longer notice period (120 days), though skills are highly relevant."
+CAND_0090300,57,0.4343,Strong NLP + LLM background; core expertise spanning LLM and Langchain; some concern on notice period (120 days) but otherwise strong fit.
+CAND_0052431,58,0.4242,Strong NLP + Computer Vision background; core expertise spanning Computer Vision and LLM; strong candidate but based outside preferred locations (Ahmedabad).
+CAND_0096142,59,0.4141,5 years applied Applied ML; has deployed python at scale; demonstrates hands-on product delivery experience.
+CAND_0081053,60,0.4040,NLP Engineer with 5.4 years experience; proven track record utilizing Vector Databases alongside Search Infrastructure; 90-day notice period is a minor constraint given strong technical alignment.
+CAND_0005260,61,0.3939,5.2 years applied NLP; has deployed python at scale; matches the 'product over research' profile in the JD.
+CAND_0080603,62,0.3838,"Senior Data Engineer with 5.8 years experience; proven track record utilizing Xgboost alongside Vector Databases; excellent fit, though constrained by a 120-day notice period."
+CAND_0010603,63,0.3737,5.3 years applied ML; has deployed search infrastructure at scale; shows clear orientation towards shipping product rather than just R&D.
+CAND_0056176,64,0.3636,"Senior Data Engineer with 7 years developing Embeddings systems; demonstrates solid Vector Databases capabilities; excellent profile, though currently located in Seattle."
+CAND_0027676,65,0.3535,8.5 years applied DevOps; has deployed computer vision at scale; career history aligns well with our product-driven needs.
+CAND_0073180,66,0.3434,Senior Software Engineer with 6.9 years experience; some concern on notice period (90 days) but otherwise strong fit.
+CAND_0018080,67,0.3333,Senior Data Engineer with 5.2 years architecting Python systems at product companies; demonstrates solid LLM capabilities; some concern on notice period (90 days) but otherwise strong fit.
+CAND_0094056,68,0.3232,Strong LLM + Embeddings background; core expertise spanning Embeddings and Vector Databases; some concern on notice period (120 days) but otherwise strong fit.
+CAND_0013536,69,0.3131,Strong Computer Vision + Xgboost background; core expertise spanning Xgboost and LLM; some concern on notice period (90 days) but otherwise strong fit.
+CAND_0041610,70,0.3030,Strong Langchain + Embeddings background; core expertise spanning Embeddings and Pinecone; strong candidate but based outside preferred locations (Indore).
+CAND_0097365,71,0.2929,Software Engineer with 9.5 years experience; demonstrates solid Search Infrastructure capabilities; 150-day notice period is a minor constraint given strong technical alignment.
+CAND_0092706,72,0.2828,"Strong LLM + Embeddings background; demonstrates solid Embeddings capabilities; longer notice period (120 days), though skills are highly relevant."
+CAND_0013665,73,0.2727,Strong Embeddings + Vector Databases background; demonstrates solid Vector Databases capabilities; strong candidate but based outside preferred locations (Trivandrum).
+CAND_0036184,74,0.2626,"Recommendation Systems Engineer with 6 years developing Langchain systems; deep practical experience with Embeddings and Vector Databases; excellent profile, though currently located in Trivandrum."
+CAND_0070525,75,0.2525,5.4 years applied Software  (ML); has deployed python at scale; matches the 'product over research' profile in the JD.
+CAND_0068160,76,0.2424,Strong LLM + Langchain background; core expertise spanning Langchain and Embeddings; strong candidate but based outside preferred locations (Gurgaon).
+CAND_0032515,77,0.2323,5.1 years applied Machine Learning; has deployed xgboost at scale; matches the 'product over research' profile in the JD.
+CAND_0050876,78,0.2222,Applied ML Engineer with 6 years architecting Python systems at product companies; proven track record utilizing Embeddings alongside Vector Databases; some concern on notice period (90 days) but otherwise strong fit.
+CAND_0066139,79,0.2121,"QA Engineer with 8.2 years experience; excellent fit, though constrained by a 90-day notice period."
+CAND_0054271,80,0.2020,5.8 years applied Software  (ML); has deployed nlp at scale; career history aligns well with our product-driven needs.
+CAND_0045694,81,0.1919,Adjacent skills only — likely below cutoff but included as final filler given experience and engagement signals.
+CAND_0095619,82,0.1818,Strong LLM + Embeddings background; core expertise spanning Embeddings and Vector Databases; strong recent engagement and Mumbai-based.
+CAND_0015578,83,0.1717,"AI Engineer with 5.4 years architecting Embeddings systems; proven track record utilizing Vector Databases alongside Pinecone; longer notice period (90 days), though skills are highly relevant."
+CAND_0001767,84,0.1616,Adjacent skills only — likely below cutoff but included as final filler given experience and engagement signals.
+CAND_0015057,85,0.1515,Strong NLP + Computer Vision background; core expertise spanning Computer Vision and LLM; 90-day notice period is a minor constraint given strong technical alignment.
+CAND_0043384,86,0.1414,5.2 years applied Computer Vision; has deployed nlp at scale; strong product-focused background over pure research.
+CAND_0073314,87,0.1313,Strong NLP + Vector Databases background; core expertise spanning Vector Databases and Search Infrastructure; strong recent engagement and Noida-based.
+CAND_0031752,88,0.1212,Strong Python + NLP background; core expertise spanning NLP and Computer Vision; some concern on notice period (120 days) but otherwise strong fit.
+CAND_0077956,89,0.1111,6.4 years applied Computer Vision; has deployed computer vision at scale; career history aligns well with our product-driven needs.
+CAND_0044279,90,0.1010,"Mechanical Engineer with 7.2 years experience; proven track record utilizing Langchain alongside Embeddings; excellent fit, though constrained by a 150-day notice period."
+CAND_0073360,91,0.0909,Adjacent skills only — likely below cutoff but included as final filler given experience and engagement signals.
+CAND_0039131,92,0.0808,"Senior Software Engineer with 7.1 years experience; proven track record utilizing Computer Vision alongside Xgboost; excellent fit, though constrained by a 120-day notice period."
+CAND_0061257,93,0.0707,Strong Python + Search Infrastructure background; demonstrates solid Search Infrastructure capabilities; strong recent engagement and Noida-based.
+CAND_0096539,94,0.0606,Adjacent skills only — likely below cutoff but included as final filler given experience and engagement signals.
+CAND_0098434,95,0.0505,"Frontend Engineer with 7.9 years developing Computer Vision systems; demonstrates solid LLM capabilities; longer notice period (90 days), though skills are highly relevant."
+CAND_0036147,96,0.0404,Adjacent skills only — likely below cutoff but included as final filler given experience and engagement signals.
+CAND_0006557,97,0.0303,NLP Engineer with 7.9 years experience; proven track record utilizing Embeddings alongside Vector Databases; 120-day notice period is a minor constraint given strong technical alignment.
+CAND_0058575,98,0.0202,"Strong Embeddings + Vector Databases background; core expertise spanning Vector Databases and Pinecone; excellent fit, though constrained by a 90-day notice period."
+CAND_0043957,99,0.0101,6.5 years applied Data Analyst; has deployed python at scale; demonstrates hands-on product delivery experience.
+CAND_0002559,100,0.0000,Strong Python + Xgboost background; demonstrates solid Xgboost capabilities; strong candidate but based outside preferred locations (Ahmedabad).

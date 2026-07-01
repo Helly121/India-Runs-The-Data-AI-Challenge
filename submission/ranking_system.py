@@ -524,8 +524,9 @@ class CandidateRankingEngine:
             
             
     def load_candidates(self):
-        """Streams candidates from JSONL, checks honeypots, and extracts top L1 pool using fast heuristic."""
-        print("Stage 1: Streaming candidates & computing fast L1 heuristic...")
+        """Loads all candidates into RAM, checks honeypots, and extracts top L1 pool."""
+        print("Stage 1: Loading all candidates into RAM & computing fast L1 heuristic...")
+        self.all_candidates = []
         all_l1_scores = []
         
         with open(self.jsonl_path, 'r', encoding='utf-8') as f:
@@ -534,41 +535,36 @@ class CandidateRankingEngine:
                     continue
                 try:
                     candidate = json.loads(line)
+                    self.all_candidates.append(candidate)
                     cid = candidate.get("candidate_id")
                     if not cid:
                         continue
                         
-                    # Calculate L1 Heuristic score
                     is_hp, issues = detect_honeypot(candidate)
                     if is_hp:
                         l1_score = -1.0
                     else:
                         l1_score = self._calculate_l1_score(candidate)
                         
-                    # To minimize memory footprint, store only scores and metadata first
-                    all_l1_scores.append((l1_score, cid, line_idx))
+                    # Store score, id, and list index
+                    all_l1_scores.append((l1_score, cid, len(self.all_candidates) - 1))
                 except Exception as e:
-                    print(f"Error parsing line {line_idx}: {e}")
+                    pass
                     
         # Sort candidates: score descending, then candidate_id ascending for deterministic tie-breaks
         all_l1_scores.sort(key=lambda x: (-x[0], x[1]))
         
-        # Take L1 Pool Size (e.g. top 2,000)
+        # Take L1 Pool Size (now 5000)
         l1_selected = all_l1_scores[:L1_POOL_SIZE]
-        selected_line_indices = {item[2]: item[0] for item in l1_selected}
         
-        # Reload only selected candidates fully into memory
+        # Build candidates_l1 directly from memory without second disk pass
         self.candidates_l1 = []
-        with open(self.jsonl_path, 'r', encoding='utf-8') as f:
-            for line_idx, line in enumerate(f):
-                if line_idx in selected_line_indices:
-                    candidate = json.loads(line)
-                    candidate["l1_score"] = selected_line_indices[line_idx]
-                    self.candidates_l1.append(candidate)
-                    
-        # Ensure they are in exact L1 sorted order
-        self.candidates_l1.sort(key=lambda x: (-x["l1_score"], x["candidate_id"]))
-        print(f"Stage 1 Complete: Filtered 100,000 candidates down to top {len(self.candidates_l1)}")
+        for l1_score, cid, idx in l1_selected:
+            cand = self.all_candidates[idx]
+            cand["l1_score"] = l1_score
+            self.candidates_l1.append(cand)
+            
+        print(f"Stage 1 Complete: Filtered {len(self.all_candidates)} candidates down to top {len(self.candidates_l1)}")
         
     def _calculate_l1_score(self, candidate):
         """Heuristic scoring helper for fast pruning."""
@@ -712,10 +708,11 @@ class CandidateRankingEngine:
             
             title_text = f"{current_title} {headline}".strip()
             
-            titles_to_embed.append(title_text)
-            skills_to_embed.append(skills_text if skills_text else "None")
-            summaries_to_embed.append(summary_text if summary_text else "None")
-            careers_to_embed.append(career_text if career_text else "None")
+            # Pre-Tokenizer Truncation to save CPU time on discarded tokens
+            titles_to_embed.append(title_text[:500])
+            skills_to_embed.append(skills_text[:1000] if skills_text else "None")
+            summaries_to_embed.append(summary_text[:1500] if summary_text else "None")
+            careers_to_embed.append(career_text[:1500] if career_text else "None")
             cids.append(cid)
             
         # Multi-threaded batched embedding generation

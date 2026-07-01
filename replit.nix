@@ -1,5 +1,5 @@
 { pkgs }: {
   deps = [
-    pkgs.python3
+    pkgs.python310Full
   ];
 }

@@ -7,7 +7,7 @@ __pycache__/
 # Datasets (large files)
 candidates.jsonl
 sample_candidates.json
-job_description.docx
+
 
 # Documentation requested to be ignored
 CHEAT_SHEET.md

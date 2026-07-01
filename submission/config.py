@@ -66,13 +66,13 @@ CONSULTING_FIRMS = [
 
 # The template that will be populated dynamically per JD
 DEFAULT_JD_REQUIREMENTS = {
-    "required_skills": [],
+    "required_skills": [("Machine Learning", True)],
     "experience": {
         "min_years": 0.0,
         "target_years": 3.0,
         "ideal_years": 5.0
     },
-    "preferred_titles": [],
+    "preferred_titles": ["AI Engineer"],
     "required_education": [],
     "preferred_industries": ["Technology", "Software", "Internet"]
 }

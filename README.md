@@ -159,6 +159,9 @@ python rank.py --candidates candidates.jsonl --out submission.csv
 python rank.py --candidates candidates_sample.jsonl --out submission.csv
 ```
 
+> [!NOTE]
+> **Network Requirements & Reproducibility:** Due to persistent storage limitations on the Replit sandbox, we cannot bundle the `sentence-transformers` weight cache directly into the repository. Therefore, our code utilizes a **Dynamic Offline Detector**. When executing in the Replit Sandbox, the script securely connects online to download the model cache automatically. However, when executing in the official Stage 3 Challenge Container (which disables network access), the detector automatically toggles `HF_HUB_OFFLINE=1` and `local_files_only=True` to execute strictly offline, natively complying with all challenge constraints.
+
 ### 3. Run validation scripts:
 ```bash
 # Run local test suite

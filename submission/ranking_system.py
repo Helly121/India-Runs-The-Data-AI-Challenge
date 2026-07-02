@@ -5,12 +5,28 @@ For India Runs Hackathon. Complete two-stage L1/L2 retrieval and scoring pipelin
 """
 
 import os
-# Force HuggingFace to allow network downloads for the Replit Sandbox demo
-# (The official Stage 3 judging container will block network at the OS level, so this is safe)
-os.environ["HF_HUB_OFFLINE"] = "0"
-os.environ["TRANSFORMERS_OFFLINE"] = "0"
-
 import sys
+import socket
+
+# Dynamic Offline Detection
+# Allows the Replit sandbox to download weights, while automatically failing-safe 
+# to strict offline mode for the Stage 3 Hackathon judging container.
+def check_internet():
+    try:
+        socket.create_connection(("huggingface.co", 443), timeout=2)
+        return True
+    except OSError:
+        return False
+
+IS_OFFLINE = not check_internet()
+
+if not IS_OFFLINE:
+    os.environ["HF_HUB_OFFLINE"] = "0"
+    os.environ["TRANSFORMERS_OFFLINE"] = "0"
+else:
+    os.environ["HF_HUB_OFFLINE"] = "1"
+    os.environ["TRANSFORMERS_OFFLINE"] = "1"
+
 import json
 import logging
 from collections import defaultdict
@@ -681,7 +697,7 @@ class CandidateRankingEngine:
             from sentence_transformers import SentenceTransformer as ST
             SentenceTransformer = ST
             
-        model = SentenceTransformer(EMBEDDING_MODEL)
+        model = SentenceTransformer(EMBEDDING_MODEL, local_files_only=IS_OFFLINE)
         
         # Embed JD Requirements
         jd_skills_text = ", ".join([s[0] for s in self.jd_requirements["required_skills"]])
@@ -714,9 +730,9 @@ class CandidateRankingEngine:
             
             # Pre-Tokenizer Truncation to save CPU time on discarded tokens
             titles_to_embed.append(title_text[:500])
-            skills_to_embed.append(skills_text[:1000] if skills_text else "None")
-            summaries_to_embed.append(summary_text[:1500] if summary_text else "None")
-            careers_to_embed.append(career_text[:1500] if career_text else "None")
+            skills_to_embed.append(skills_text[:800] if skills_text else "None")
+            summaries_to_embed.append(summary_text[:800] if summary_text else "None")
+            careers_to_embed.append(career_text[:800] if career_text else "None")
             cids.append(cid)
             
         # Multi-threaded batched embedding generation

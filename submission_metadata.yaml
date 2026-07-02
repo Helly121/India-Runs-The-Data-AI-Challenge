@@ -41,7 +41,7 @@ sandbox_link: "https://replit.com/@ethangade96/India-Runs-The-Data-AI-Challenge"
 # candidate sample. See Section 10.5 of submission_spec.md for acceptable
 # platforms (HuggingFace Spaces, Streamlit Cloud, Replit, Colab, Docker, Binder).
 
-reproduce_command: " python rank.py --candidates candidates.jsonl --out submission.csv"
+reproduce_command: "python rank.py --candidates candidates.jsonl --out submission.csv"
 # The single command that produces submission.csv from candidates.jsonl.
 # Should run end-to-end within 5 minutes on CPU with 16GB RAM and no network.
 
